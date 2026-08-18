@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body { font-family: 'Inter', sans-serif; }
+
+.card { @apply bg-surface rounded-lg shadow-md p-5 border border-slate-100; }
+.badge { @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold; }
+.badge-pending { @apply bg-warning-bg text-warning; }
+.badge-collected { @apply bg-primary-bg text-primary; }
+.badge-delivered { @apply bg-success-bg text-success; }
+.badge-partial { @apply bg-primary-bg text-primary-dark; }
+.badge-active { @apply bg-success-bg text-success; }
+.badge-inactive { @apply bg-danger-bg text-danger; }
+.btn-primary { @apply bg-primary text-white font-semibold px-4 py-2.5 rounded-md hover:bg-primary-dark transition-colors disabled:opacity-50; }
+.btn-secondary { @apply bg-appbg text-slate-700 font-semibold px-4 py-2.5 rounded-md border border-slate-200 hover:bg-slate-100 transition-colors; }
+.btn-danger { @apply bg-danger text-white font-semibold px-4 py-2.5 rounded-md hover:bg-red-600 transition-colors; }
+.input { @apply w-full border border-slate-200 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors bg-appbg focus:bg-white; }
