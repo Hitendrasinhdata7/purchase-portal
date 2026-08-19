@@ -5,14 +5,15 @@ import PageHeader from "../components/PageHeader";
 import DataTable, { Column } from "../components/DataTable";
 import Modal from "../components/Modal";
 import { useToast } from "../components/Toast";
-import type { User } from "../types";
+import type { User, Store } from "../types";
 
-const EMPTY = { username: "", email: "", first_name: "", last_name: "", role: "STAFF", password: "" };
+const EMPTY = { username: "", email: "", first_name: "", last_name: "", role: "STAFF", password: "", store: "" };
 
 export default function Staff() {
   const navigate = useNavigate();
   const toast = useToast();
   const { data: users, isLoading } = useList<User>("users", "/users/");
+  const { data: stores } = useList<Store>("stores", "/stores/");
   const createMut = useCreate<User>("users", "/users/");
   const updateMut = useUpdate<User>("users", "/users/");
 
@@ -20,7 +21,8 @@ export default function Staff() {
   const [form, setForm] = useState<any>(EMPTY);
 
   const save = async () => {
-    await createMut.mutateAsync(form);
+    const payload = { ...form, store: form.store || null };
+    await createMut.mutateAsync(payload);
     toast("Staff member added");
     setModalOpen(false);
     setForm(EMPTY);
@@ -88,6 +90,13 @@ export default function Staff() {
               <option value="STAFF">Staff</option>
               <option value="STORE_ADMIN">Store Admin</option>
             </select></div>
+          {form.role !== "SUPERADMIN" && (
+            <div><label className="block text-xs font-semibold text-slate-500 mb-1">Store</label>
+              <select className="input" value={form.store} onChange={(e) => setForm({ ...form, store: e.target.value })}>
+                <option value="">— Select a store —</option>
+                {(stores || []).map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select></div>
+          )}
           <div><label className="block text-xs font-semibold text-slate-500 mb-1">Temporary Password</label>
             <input className="input" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
         </div>
