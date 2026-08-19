@@ -53,7 +53,6 @@ export default function Catalog() {
       { key: "sku", label: "SKU" },
       { key: "unit", label: "Unit" },
       { key: "default_vendor_name", label: "Default Vendor", render: (p) => p.default_vendor_name || "—" },
-      { key: "price", label: "Price", render: (p) => `$${p.price}`, sortValue: (p) => parseFloat(p.price) },
       { key: "is_active", label: "Active", render: (p) => (p.is_active ? "Yes" : "No") },
       {
         key: "actions",
@@ -104,7 +103,7 @@ export default function Catalog() {
             <input className="input" value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} /></div>
           <div><label className="block text-xs font-semibold text-slate-500 mb-1">Unit</label>
             <input className="input" value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} /></div>
-          <div><label className="block text-xs font-semibold text-slate-500 mb-1">Default Vendor</label>
+          <div><label className="block text-xs font-semibold text-slate-500 mb-1">Default Vendor (optional)</label>
             <select className="input" value={form.default_vendor} onChange={(e) => setForm({ ...form, default_vendor: e.target.value })}>
               <option value="">None</option>
               {(vendors || []).map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
