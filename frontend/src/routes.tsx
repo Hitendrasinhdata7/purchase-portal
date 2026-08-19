@@ -9,6 +9,7 @@ import Deliveries from "./pages/Deliveries";
 import Vendors from "./pages/Vendors";
 import VendorDetail from "./pages/VendorDetail";
 import Catalog from "./pages/Catalog";
+import Stores from "./pages/Stores";
 import Staff from "./pages/Staff";
 import StaffDetail from "./pages/StaffDetail";
 import Reports from "./pages/Reports";
@@ -41,6 +42,7 @@ export default function AppRoutes() {
         <Route path="/vendors" element={<Vendors />} />
         <Route path="/vendors/:id" element={<VendorDetail />} />
         <Route path="/catalog" element={<Catalog />} />
+        <Route path="/stores" element={<Stores />} />
         <Route path="/staff" element={<Staff />} />
         <Route path="/staff/:id" element={<StaffDetail />} />
         <Route path="/reports" element={<Reports />} />

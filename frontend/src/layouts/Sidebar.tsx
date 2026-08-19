@@ -3,6 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: "🏠" },
+  { to: "/stores", label: "Stores", icon: "🏢", superAdminOnly: true },
   { to: "/orders", label: "Orders", icon: "🧾" },
   { to: "/reshuffle", label: "Reshuffle", icon: "🔄" },
   { to: "/deliveries", label: "Deliveries", icon: "🚚" },
@@ -22,6 +23,7 @@ interface SidebarProps {
 export default function Sidebar({ open, onClose }: SidebarProps) {
   const { user } = useAuth();
   const canSeeStaff = user?.role === "SUPERADMIN" || user?.role === "STORE_ADMIN";
+  const isSuperAdmin = user?.role === "SUPERADMIN";
 
   const content = (
     <div className="flex flex-col h-full bg-surface">
@@ -33,7 +35,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         </div>
       </div>
       <nav className="flex-1 overflow-y-auto py-3 px-3">
-        {NAV.filter((n) => !n.adminOnly || canSeeStaff).map((n) => (
+        {NAV.filter((n) => (!n.adminOnly || canSeeStaff) && (!n.superAdminOnly || isSuperAdmin)).map((n) => (
           <NavLink
             key={n.to}
             to={n.to}
