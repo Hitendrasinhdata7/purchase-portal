@@ -1,6 +1,21 @@
 from rest_framework import viewsets, permissions
-from .models import Product
-from .serializers import ProductSerializer
+from .models import Product, Category
+from .serializers import ProductSerializer, CategorySerializer
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        u = self.request.user
+        qs = Category.objects.all()
+        if not u.is_superadmin:
+            qs = qs.filter(store=u.store)
+        return qs
+
+    def perform_create(self, serializer):
+        serializer.save(store=self.request.user.store)
 
 
 class ProductViewSet(viewsets.ModelViewSet):

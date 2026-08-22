@@ -35,6 +35,12 @@ export interface Vendor {
   created_at: string;
 }
 
+export interface Category {
+  id: number;
+  store: number;
+  name: string;
+}
+
 export interface Product {
   id: number;
   store: number;

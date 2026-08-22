@@ -4,7 +4,7 @@ import PageHeader from "../components/PageHeader";
 import DataTable, { Column } from "../components/DataTable";
 import Modal from "../components/Modal";
 import { useToast } from "../components/Toast";
-import type { Product, Vendor } from "../types";
+import type { Product, Vendor, Category } from "../types";
 
 const UNITS = ["Pcs", "Litre", "Kg", "Gram", "ml", "Pack", "Box", "Bottle"];
 
@@ -25,6 +25,8 @@ export default function Catalog() {
   const toast = useToast();
   const { data: products, isLoading } = useList<Product>("products", "/products/");
   const { data: vendors } = useList<Vendor>("vendors", "/vendors/");
+  const { data: categories } = useList<Category>("categories", "/products/categories/");
+  const createCategoryMut = useCreate<Category>("categories", "/products/categories/");
   const createMut = useCreate<Product>("products", "/products/");
   const updateMut = useUpdate<Product>("products", "/products/");
   const removeMut = useRemove("products", "/products/");
@@ -37,12 +39,16 @@ export default function Catalog() {
   const [form, setForm] = useState<any>(EMPTY);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
 
   const openCreate = () => {
     setEditing(null);
     setForm(EMPTY);
     setImageFile(null);
     setImagePreview(null);
+    setAddingCategory(false);
+    setNewCategoryName("");
     setModalOpen(true);
   };
   const openEdit = (p: Product) => {
@@ -50,6 +56,8 @@ export default function Catalog() {
     setForm({ ...p, default_vendor: p.default_vendor || "" });
     setImageFile(null);
     setImagePreview(p.image || null);
+    setAddingCategory(false);
+    setNewCategoryName("");
     setModalOpen(true);
   };
 
@@ -59,7 +67,17 @@ export default function Catalog() {
   };
 
   const save = async () => {
-    if (!form.name.trim() || !form.brand.trim() || !form.category.trim()) {
+    let categoryName = form.category;
+    if (addingCategory) {
+      if (!newCategoryName.trim()) {
+        toast("Enter a name for the new category", "error");
+        return;
+      }
+      const created = await createCategoryMut.mutateAsync({ name: newCategoryName.trim() });
+      categoryName = created.name;
+    }
+
+    if (!form.name.trim() || !form.brand.trim() || !categoryName?.trim()) {
       toast("Product Name, Brand and Category are required", "error");
       return;
     }
@@ -67,7 +85,7 @@ export default function Catalog() {
     const fd = new FormData();
     fd.append("name", form.name);
     fd.append("brand", form.brand);
-    fd.append("category", form.category);
+    fd.append("category", categoryName);
     fd.append("size_weight", form.size_weight || "");
     fd.append("barcode", form.barcode || "");
     fd.append("sku", form.sku || "");
@@ -100,6 +118,16 @@ export default function Catalog() {
 
   const columns: Column<Product>[] = useMemo(
     () => [
+      {
+        key: "image",
+        label: "",
+        render: (p) =>
+          p.image ? (
+            <img src={p.image} alt={p.name} className="w-10 h-10 object-cover rounded-md border border-slate-200" />
+          ) : (
+            <div className="w-10 h-10 rounded-md bg-slate-100 flex items-center justify-center text-slate-300 text-xs">—</div>
+          ),
+      },
       { key: "name", label: "Name", sortValue: (p) => p.name },
       { key: "brand", label: "Brand", render: (p) => p.brand || "—" },
       { key: "category", label: "Category", render: (p) => p.category || "—" },
@@ -161,7 +189,36 @@ export default function Catalog() {
             <input className="input" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} /></div>
 
           <div><label className="block text-xs font-semibold text-slate-500 mb-1">Category *</label>
-            <input className="input" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} /></div>
+            {!addingCategory ? (
+              <select
+                className="input"
+                value={form.category}
+                onChange={(e) => {
+                  if (e.target.value === "__new__") {
+                    setAddingCategory(true);
+                    setNewCategoryName("");
+                  } else {
+                    setForm({ ...form, category: e.target.value });
+                  }
+                }}
+              >
+                <option value="">Select a category</option>
+                {(categories || []).map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
+                <option value="__new__">+ Add new category</option>
+              </select>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  className="input"
+                  placeholder="New category name"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  autoFocus
+                />
+                <button type="button" className="btn-secondary" onClick={() => setAddingCategory(false)}>Cancel</button>
+              </div>
+            )}
+          </div>
 
           <div><label className="block text-xs font-semibold text-slate-500 mb-1">Size / Weight</label>
             <input className="input" value={form.size_weight} onChange={(e) => setForm({ ...form, size_weight: e.target.value })} /></div>

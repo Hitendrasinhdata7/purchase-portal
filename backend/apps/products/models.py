@@ -3,6 +3,18 @@ from apps.stores.models import Store
 from apps.vendors.models import Vendor
 
 
+class Category(models.Model):
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="categories")
+    name = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ["name"]
+        unique_together = ["store", "name"]
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="products")
     name = models.CharField(max_length=200)
