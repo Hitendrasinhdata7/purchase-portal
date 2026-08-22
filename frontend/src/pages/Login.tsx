@@ -4,8 +4,8 @@ import { login } from "../services/auth";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Login() {
-  const [username, setUsername] = useState("manager@store.com");
-  const [password, setPassword] = useState("123456");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { setUser } = useAuth();
@@ -49,9 +49,6 @@ export default function Login() {
           <button type="submit" disabled={loading} className="btn-primary mt-2">
             {loading ? "Signing in..." : "Sign in"}
           </button>
-          <p className="text-xs text-slate-400 text-center">
-            Demo: manager@store.com / 123456 · admin@store.com / 123456
-          </p>
         </form>
       </div>
     </div>
