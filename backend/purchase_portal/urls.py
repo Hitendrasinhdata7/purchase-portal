@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.conf import settings
-from django.conf.urls.static import static
-from django.urls import path, include
+from django.urls import path, re_path, include
+from django.views.static import serve as static_serve
 from .health import health
 
 urlpatterns = [
@@ -17,7 +17,6 @@ urlpatterns = [
     path("api/users/", include("apps.accounts.user_urls")),
 ]
 
-# Serve uploaded product images. For a small/demo deployment this is served
-# directly by Django/Gunicorn rather than needing a separate static file
-# server or S3 bucket — fine for this app's scale.
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += [
+    re_path(r"^media/(?P<path>.*)$", static_serve, {"document_root": settings.MEDIA_ROOT}),
+]
