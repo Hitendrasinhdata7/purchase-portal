@@ -6,12 +6,19 @@ from apps.vendors.models import Vendor
 class Product(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="products")
     name = models.CharField(max_length=200)
+    brand = models.CharField(max_length=200, blank=True)
+    category = models.CharField(max_length=200, blank=True)
+    size_weight = models.CharField(max_length=100, blank=True)
+    barcode = models.CharField(max_length=100, blank=True)
     sku = models.CharField(max_length=100, blank=True)
     unit = models.CharField(max_length=20, default="Pcs")
     default_vendor = models.ForeignKey(
         Vendor, on_delete=models.SET_NULL, null=True, blank=True, related_name="products"
     )
+    quantity = models.PositiveIntegerField(default=0)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    image = models.ImageField(upload_to="products/", blank=True, null=True)
+    notes = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

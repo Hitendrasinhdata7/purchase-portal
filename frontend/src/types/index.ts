@@ -39,11 +39,18 @@ export interface Product {
   id: number;
   store: number;
   name: string;
+  brand: string;
+  category: string;
+  size_weight: string;
+  barcode: string;
   sku: string;
   unit: string;
   default_vendor: number | null;
   default_vendor_name: string | null;
+  quantity: number;
   price: string;
+  image: string | null;
+  notes: string;
   is_active: boolean;
   created_at: string;
 }
